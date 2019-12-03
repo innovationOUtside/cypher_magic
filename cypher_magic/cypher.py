@@ -43,11 +43,11 @@ class CypherMagic(Magics):
             print(f'Accessing graph database with password: {pwd}')
             self.graph = Graph(password=pwd)
         
-        _response = self.graph.run(cell)
-        
-        if args.quiet:
+        if args.quiet or not cell:
             return
 
+        _response = self.graph.run(cell)
+        
         if output_type is None:
             response = _response.to_data_frame()
         elif output_type=='matrix':
