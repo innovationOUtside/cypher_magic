@@ -8,6 +8,7 @@ from py2neo import Graph
 
 DEFAULT_PWD='neo4jbinder'
 
+
 @magics_class
 class CypherMagic(Magics):
     def __init__(self, shell, cache_display_data=False):
@@ -16,15 +17,16 @@ class CypherMagic(Magics):
 
     @line_cell_magic
     @magic_arguments()
-    @argument('--password', '-p',
-          default=None,
-          help='Database password'
-    )
+    @argument('--password', '-p', default=None, help='Database password')
+    @argument('--userName', '-u', default=None, help='Database password')
+    @argument('--server', '-s', default=None, help='Database password')
+    
     @argument('-q', '--quiet', default=False, action='store_true',
               help='Suppress output from cell.')
     @argument('-o', '--output', default=None)
     @argument('-v', '--variable', default=None)
     @argument('-r','--reset', default=False, action='store_true')
+    @argument("query", type=str, nargs='*', help="Cypher query")
     def cypher(self,line, cell=''):
         '''Run cypher commands commands.'''
         args = parse_argstring(self.cypher, line)
@@ -39,14 +41,23 @@ class CypherMagic(Magics):
             print("Neo4j database connection reset...")
             return
         
-        if self.graph is None or args.password is not None:
-            print(f'Accessing graph database with password: {pwd}')
-            self.graph = Graph(password=pwd)
+        if self.graph is None or args.password is not None or args.userName is not None or args.server is not None:
+            self.graph = Graph(password=pwd, host = args.server, user = args.userName)
+            if(self.graph):
+                print("Neo4j database connection established... " + self.graph.service.uri)
+            else:
+                print("Error establishing connection...")
         
-        if args.quiet or not cell:
+        # if not cell:
+            # return self.graph.run(line)
+        
+        
+        
+        if args.quiet or (not cell and not args.query):
             return
-
-        _response = self.graph.run(cell)
+        query = cell or ' '.join(args.query)
+        # print(query)
+        _response = self.graph.run(query)
         
         if output_type is None:
             response = _response.to_data_frame()
@@ -59,6 +70,20 @@ class CypherMagic(Magics):
                 response = None
         elif output_type=='table':
             response = _response.to_table()
+        elif output_type=='raw':
+            response = _response
+        elif output_type=='graph':
+            try:
+                import networkx
+                import matplotlib
+
+                g = _response.data()
+                
+                response = networkx.draw(g)
+            except ModuleNotFoundError:
+                warn("You need to install networkx to return a matrix.")
+                response = None
+        
         else:
             response = _response.to_data_frame()
 
