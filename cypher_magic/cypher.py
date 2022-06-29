@@ -6,7 +6,7 @@ from warnings import warn
 
 from py2neo import Graph
 
-DEFAULT_PWD='neo4jbinder'
+DEFAULT_PWD='password'
 
 
 @magics_class
