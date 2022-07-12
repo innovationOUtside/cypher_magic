@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='magic-cypher', 
       version='0.9.0', 
-      description='Cypher magic for IPython',
+      description='',
       url='https://github.com/petehughes/cypher_magic',
       author='Pete Hughes',
       license='MIT',
