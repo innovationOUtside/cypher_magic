@@ -10,6 +10,8 @@ from .drawGraph import draw, init_notebook_mode
 # import json
 
 DEFAULT_PWD='password'
+DEFAULT_USERNAME='neo4j'
+DEFAULT_SERVER='bolt://localhost'
 
 class bcolors:
     HEADER = '\033[95m'
@@ -56,7 +58,8 @@ class CypherMagic(Magics):
         if args.variable:
             cell = self.shell.user_ns[args.variable]
         pwd = DEFAULT_PWD if args.password is None else args.password
-
+        userName = DEFAULT_USERNAME if args.userName is None else args.userName
+        host = DEFAULT_SERVER if args.server is None else args.server
         output_type = args.output
         outputOptions = args.outputOptions;
   
@@ -67,13 +70,14 @@ class CypherMagic(Magics):
         
         if self.graph is None or args.password is not None or args.userName is not None or args.server is not None:
             try:
-                self.graph = Graph(password=pwd, host = args.server, user = args.userName)
+                # self.graph = Graph(password=pwd, host = args.server, user = args.userName)
+                self.graph = Graph(host, auth=(userName, pwd))
                 if(self.graph):
                     print("Neo4j database connection established... " + self.graph.service.uri)
                 else:
                     print("Error establishing connection...")
             except:
-                print( bcolors.FAIL + "Error connecting server" )
+                print( bcolors.FAIL + "Error connecting server called: " + host )
                 print("\tcheck the server is running")
                 print("\tcheck you are connected to the VPN (in needed)")
                 print("\tcor change the host name with the --server/-s option" + bcolors.FAIL)

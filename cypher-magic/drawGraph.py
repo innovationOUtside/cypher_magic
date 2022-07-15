@@ -44,7 +44,8 @@ def vis_network(nodes, edges, physics=True):
     :param physics: The options for the physics of vis.js.
     :return: IPython.display.HTML
     """
-    path = os.path.join("C:\mygit\cypher_magic\cypher_magic", 'assets\index.html')
+    dir = os.path.dirname(__file__)
+    path = os.path.join(dir, 'assets\index.html')
     base = open(path).read()
 
     # print({nodes:json.dumps(nodes), edges:json.dumps(edges), physics:json.dumps(physics)})
@@ -77,6 +78,42 @@ def defineNode(n, options):
                     nn["label"] = n[thisOptions]
     return nn
 
+def defineEdge(rel, options):
+    nn = {"from": rel.nodes[0].identity, "to": rel.nodes[1].identity, "label": ":".join(rel.types()), "arrowhead": "box"}
+    if (options is not None):
+        for l in rel.types():
+            if(l in options):
+                thisOptions= options[l]
+                if(isinstance(thisOptions, dict)):
+                    if(thisOptions.get("label") is not None):
+                        nn["label"]=rel[thisOptions["label"]]
+                    if(thisOptions.get("image") is not None):
+                        nn["image"]=thisOptions["image"]
+                        nn["shape"]="image"
+                    if(thisOptions.get("opacity") is not None):
+                        nn["opacity"]=thisOptions["opacity"]
+                    if(thisOptions.get("shape") is not None):
+                        nn["shape"]=thisOptions["shape"]
+                    if(thisOptions.get("width") is not None):
+                        nn["width"]=thisOptions["width"]
+                    if(thisOptions.get("color") is not None):
+                        c = rel[thisOptions["color"]]
+                        if(not c.startswith('#')):
+                            c='#'+c
+                        nn["color"]=c
+                    if(thisOptions.get("colorValue") is not None):
+                        c = rel[thisOptions["colorValue"]]
+                        if(c is not None):
+                            if(not c.startswith('#')):
+                                c='#'+c
+                            nn["color"]=c
+                    if(thisOptions.get("noArrows") is not None):
+                        nn["arrows"]={ "to":{"enabled":False} }
+                            
+                elif(isinstance(thisOptions, str)):
+                    nn["label"] = rel[thisOptions]
+    return nn
+
 
 def draw(p, options, physics=True, limit=100):
     nodes = []
@@ -95,6 +132,6 @@ def draw(p, options, physics=True, limit=100):
                     nodes.append(nn)
             for rel in o.relationships:
                 if rel is not None:
-                    edges.append({"from": rel.nodes[0].identity, "to": rel.nodes[1].identity, "label": ":".join(rel.types()), "arrowhead": "box"})
+                    edges.append(defineEdge(rel, options))
     #return 
     return vis_network(nodes, edges, physics=physics)
