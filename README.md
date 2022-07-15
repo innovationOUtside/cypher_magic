@@ -18,6 +18,7 @@ the `-o`/`--output` set the output type:
 `raw`: response from the `py2neo`
 `table`,
 `matrix` - requires `sympy`
+`graph`
 
 ```
 %cypher -r
@@ -39,3 +40,37 @@ RETURN p.name AS name
 ```
 
 the magic will return a `pandas` dataframe by default. Other return formats, set using the `-o`/`--output` parameter, include `table` and `matrix` (the latter requires `sympy` to be installed).
+
+## graph output options:
+
+the graph output can be tailored by using a number of options:
+
+```
+{
+    "label of node or type of edge": "attribute name to use to describe it"
+}
+```
+
+eg
+
+```
+{"Person":"FullName" }
+```
+
+complex:
+the graph output can be tailored by using a number of options:
+
+```
+{
+    "label of node or type of edge": {
+        "label":"attribute name to use to describe it",
+        "opacity":"the opacity",
+        "width":"the width of the relationship line", // relationship only
+        "color": "the colour",
+        "colorValue": "the value in the relationship that defines the color",
+        "image": "url to the image" // node only
+        "shape": "the type of shape" // node only
+        "noArrows": "remove all the arrows from showing" // relationship only
+    }
+}
+```
