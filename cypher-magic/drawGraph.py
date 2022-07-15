@@ -87,13 +87,8 @@ def defineEdge(rel, options):
                 if(isinstance(thisOptions, dict)):
                     if(thisOptions.get("label") is not None):
                         nn["label"]=rel[thisOptions["label"]]
-                    if(thisOptions.get("image") is not None):
-                        nn["image"]=thisOptions["image"]
-                        nn["shape"]="image"
                     if(thisOptions.get("opacity") is not None):
                         nn["opacity"]=thisOptions["opacity"]
-                    if(thisOptions.get("shape") is not None):
-                        nn["shape"]=thisOptions["shape"]
                     if(thisOptions.get("width") is not None):
                         nn["width"]=thisOptions["width"]
                     if(thisOptions.get("color") is not None):
