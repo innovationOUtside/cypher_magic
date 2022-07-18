@@ -2,6 +2,8 @@
 
 Really simple IPython magic for running cypher commands.
 
+__For an updated, improved and extended version of this magic, see https://github.com/petehughes/cypher_magic__
+
 At the moment the ability to connect to arbitrary neo4j databases is limited - the only configurable connection parameter currently available is the password.
 
 For a demo, see: [psychemedia/binder-neo4j](https://github.com/psychemedia/binder-neo4j).
